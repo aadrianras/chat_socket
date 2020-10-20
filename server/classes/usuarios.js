@@ -25,10 +25,6 @@ class Usuarios {
         return this.grupo;
     }
 
-    getUsuariosPorSala(sala) {
-        return sala;
-    }
-
     borrarUsuario(id) {
         let usuarioBorrado = this.getUsuario(id);
         this.grupo = this.grupo.filter(user => user.id !== id);

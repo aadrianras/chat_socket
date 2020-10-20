@@ -19,14 +19,18 @@ let usuario = {
 socket.on('connect', function () {
     console.log('Conectado al servidor');
     socket.emit('entrarChat', usuario, function (resp) {
-        console.log('Usuarios conectados: ', resp);
+        renderizarUsuarios(resp);
     });
 });
 
-// escuchar
+// escuchamos cuando un usuario abandona la sala
 socket.on('disconnect', function () {
     console.log('Perdimos conexión con el servidor');
+});
 
+socket.on('listaUsuariosEnSala', function (listaUsuariosEnSala) {
+    console.log('Lista actualizada');
+    renderizarUsuarios(listaUsuariosEnSala);
 });
 
 //Este codigo sera utilizado para que un usuario envie un mensaje a todos
@@ -34,8 +38,10 @@ socket.on('disconnect', function () {
 
 
 // Notifica en el chat cuando un usuario se conecta, desconencta y cuantos usuarios existen el grupo
-socket.on('crearMensaje', function (mensaje) {
-    console.log('Servidor:', mensaje);
+socket.on('crearMensaje', function (info) {
+    console.log('Servidor:', info);
+    renderizarMensaje(info);
+    scrollBottom();
 });
 
 
@@ -43,4 +49,6 @@ socket.on('crearMensaje', function (mensaje) {
 
 socket.on('mensajePrivado', function (mensaje) {
     console.log('Mensaje Privado: ', mensaje);
+    renderizarMensaje(mensaje);
+    scrollBottom();
 })

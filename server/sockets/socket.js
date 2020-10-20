@@ -32,17 +32,23 @@ io.on('connection', (client) => {
         callback(usuarios.getUsuariosEnSala(usuario.sala));
 
         //Notificamos a todos los usuarios que un usuario ingreso a la sala
-        const msg = `El usuario ${usuario.nombre} acaba ingresar a la Sala <---${usuario.sala}--->`;
-        client.broadcast.to(usuario.sala).emit('crearMensaje', crearMensaje('Administrador', msg))
+        const msg = `El usuario ${usuario.nombre} acaba ingresar a la Sala ${usuario.sala}`;
+        client.broadcast.to(usuario.sala).emit('crearMensaje', crearMensaje('Administrador', msg));
+
+
+        //Agregamos al usuario en la lista del caht
+        client.broadcast.to(usuario.sala).emit('listaUsuariosEnSala', usuarios.getUsuariosEnSala(usuario.sala));
     });
 
 
     //Recibe un mensaje y lo reenviar a todos los usuarios
-    client.on('crearMensaje', (data) => {
+    client.on('crearMensaje', (data, callback) => {
         let persona = usuarios.getUsuario(client.id);
 
         let msg = crearMensaje(persona.nombre, data.mensaje);
         client.broadcast.to(persona.sala).emit('crearMensaje', msg);
+
+        callback(msg);
     })
 
 
@@ -60,12 +66,21 @@ io.on('connection', (client) => {
         //Eliminamos al usuario del grupo
         let usuarioDesconectado = usuarios.borrarUsuario(client.id);
 
+
+
         //Mostramos en consola el nombre del usuario que se desconecto
         console.log(`El usuario ${usuarioDesconectado.nombre} abandono la sala`);
 
+
+
         //Notificamos a todos los usuarios que el usuario abandono el grupo
-        const msg = `El usuario ${usuarioDesconectado.nombre} acaba de abandonar la sala <---${usuarioDesconectado.sala}--->`;
+        const msg = `El usuario ${usuarioDesconectado.nombre} acaba de abandonar la sala`;
         client.broadcast.to(usuarioDesconectado.sala).emit('crearMensaje', crearMensaje('Administrador', msg));
+
+
+
+        //Enviamos el nuevo grupo de la sala
+        client.broadcast.to(usuarioDesconectado.sala).emit('listaUsuariosEnSala', usuarios.getUsuariosEnSala(usuarioDesconectado.sala));
     });
 
 
