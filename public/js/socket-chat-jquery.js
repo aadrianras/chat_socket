@@ -9,6 +9,7 @@ let txtMensaje = $('#txtMensaje');
 let nombre = params2.get('nombre');
 let sala = params2.get('sala');
 let divChatbox = $('#divChatbox');
+let nombre_sala = $('#nombre_sala');
 
 
 //Funciones para renderizar los usuarios que se encuentran en la sala
@@ -35,7 +36,13 @@ function renderizarUsuarios(usuariosEnSala) {
 
         html += usuarioHTML;
     }
+    //Cambiamos el nombre de la sala
+    let htmlNombre = '';
+    htmlNombre = `
+    <h3 class="box-title">Sala de chat: <small>${sala}</small></h3>
+    `;
 
+    nombre_sala.html(htmlNombre);
     divUsuarios.html(html);
 }
 
